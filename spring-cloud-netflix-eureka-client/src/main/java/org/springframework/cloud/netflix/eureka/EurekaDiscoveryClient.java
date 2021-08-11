@@ -37,6 +37,8 @@ import com.netflix.discovery.shared.Applications;
 
 /**
  * @author Spencer Gibb
+ * <p>
+ * 对原生eureka做的包装
  */
 public class EurekaDiscoveryClient implements DiscoveryClient {
 

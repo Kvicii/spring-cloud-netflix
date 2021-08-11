@@ -34,6 +34,8 @@ import org.springframework.core.style.ToStringCreator;
 /**
  * @author Dave Syer
  * @author Gregor Zurowski
+ * <p>
+ * 将springboot风格的配置(yml) 用这个Bean进行加载
  */
 @ConfigurationProperties(EurekaServerConfigBean.PREFIX)
 public class EurekaServerConfigBean implements EurekaServerConfig {

@@ -17,8 +17,6 @@
 
 package org.springframework.cloud.netflix.eureka.serviceregistry;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -42,6 +40,9 @@ import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.EurekaClientConfig;
 
 /**
+ * 包含了EurekaClient ApplicationInfoManager等组件
+ * spring boot启动时 就会去执行EurekaServiceRegistry#register方法
+ *
  * @author Spencer Gibb
  */
 public class EurekaRegistration implements Registration {

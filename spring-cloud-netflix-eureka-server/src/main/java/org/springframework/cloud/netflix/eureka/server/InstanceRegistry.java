@@ -41,6 +41,11 @@ import org.springframework.context.ApplicationEvent;
 
 /**
  * @author Spencer Gibb
+ * <p>
+ * 服务注册/下线/心跳 会通过这个类进行简单的包装 实际调用的还是eureka的源代码
+ * <p>
+ * eureka在实例化EurekaServerConfig | EurekaClientConfig |EurekaInstanceConfig时 都是从都是从本地的的eureka-client.properties | eureka-server.properties中去读取的
+ * spring-cloud的环境下肯定都是从spring-boot的配置文件中读取的 读取之后由spring-cloud封装的对象对外提供配置的读取
  */
 public class InstanceRegistry extends PeerAwareInstanceRegistryImpl
 		implements ApplicationContextAware {

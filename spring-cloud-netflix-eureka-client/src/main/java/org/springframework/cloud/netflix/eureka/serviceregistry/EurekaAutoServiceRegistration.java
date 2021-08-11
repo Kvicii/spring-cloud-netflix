@@ -37,6 +37,8 @@ import org.springframework.core.Ordered;
  * @author Jon Schneider
  * @author Jakub Narloch
  * @author raiyan
+ * <p>
+ * 封装原生eureka的InstanceInfoReplicator组件的服务注册逻辑
  */
 public class EurekaAutoServiceRegistration implements AutoServiceRegistration, SmartLifecycle, Ordered {
 
@@ -60,6 +62,9 @@ public class EurekaAutoServiceRegistration implements AutoServiceRegistration, S
 		this.registration = registration;
 	}
 
+	/**
+	 * 原生的eureka在启动后40s才会去注册 该方法的作用就是直接去注册 而不是要等待40s
+	 */
 	@Override
 	public void start() {
 		// only set the port if the nonSecurePort or securePort is 0 and this.port != 0

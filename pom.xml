@@ -20,6 +20,8 @@
 		<tag>HEAD</tag>
 	</scm>
 	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<bintray.package>netflix</bintray.package>
 		<main.basedir>${basedir}</main.basedir>
 		<netty.version>4.0.27.Final</netty.version>
@@ -61,11 +63,12 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -250,14 +253,14 @@
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
+<!--					<plugin>-->
+<!--						<groupId>org.apache.maven.plugins</groupId>-->
+<!--						<artifactId>maven-surefire-plugin</artifactId>-->
+<!--						<configuration>-->
 							<!-- Sets the VM argument line used when unit tests are run. -->
-							<argLine>${surefireArgLine}</argLine>
-						</configuration>
-					</plugin>
+<!--							<argLine>${surefireArgLine}</argLine>-->
+<!--						</configuration>-->
+<!--					</plugin>-->
 				</plugins>
 			</build>
 		</profile>

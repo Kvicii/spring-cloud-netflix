@@ -83,6 +83,8 @@ import com.netflix.discovery.EurekaClientConfig;
  * @author Matt Jenkins
  * @author Ryan Baxter
  * @author Daniel Lavoie
+ * <p>
+ * 完成DiscoveryClient的构造和初始化 实现了eureka-client的初始化和启动
  */
 @Configuration
 @EnableConfigurationProperties

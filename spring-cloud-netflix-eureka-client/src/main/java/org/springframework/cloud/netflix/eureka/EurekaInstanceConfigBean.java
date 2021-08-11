@@ -38,6 +38,8 @@ import com.netflix.appinfo.MyDataCenterInfo;
  * @author Spencer Gibb
  * @author Ryan Baxter
  * @author Gregor Zurowski
+ * <p>
+ * 从spring-boot的application.yml中将配置加载出来 通过这个Bean对外提供所有服务实例相关的配置的读取
  */
 @ConfigurationProperties("eureka.instance")
 public class EurekaInstanceConfigBean implements CloudEurekaInstanceConfig, EnvironmentAware {

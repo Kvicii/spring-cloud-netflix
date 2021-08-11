@@ -32,6 +32,11 @@ public class EurekaServiceRegistry implements ServiceRegistry<EurekaRegistration
 
 	private static final Log log = LogFactory.getLog(EurekaServiceRegistry.class);
 
+	/**
+	 * 完成服务注册
+	 *
+	 * @param reg
+	 */
 	@Override
 	public void register(EurekaRegistration reg) {
 		maybeInitializeClient(reg);
@@ -42,6 +47,8 @@ public class EurekaServiceRegistry implements ServiceRegistry<EurekaRegistration
 					+ reg.getInstanceConfig().getInitialStatus());
 		}
 
+		// 调用eureka内部的方法 通过将服务实例状态设置为UP 通知所有的监听器
+		// eureka源代码的 {@link com.netflix.discovery.DiscoveryClient.initScheduledTasks} 中InstanceInfoReplicator接收到变化之后 就会发起注册
 		reg.getApplicationInfoManager()
 				.setInstanceStatus(reg.getInstanceConfig().getInitialStatus());
 
@@ -99,6 +106,7 @@ public class EurekaServiceRegistry implements ServiceRegistry<EurekaRegistration
 		return status;
 	}
 
+	@Override
 	public void close() {
 	}
 

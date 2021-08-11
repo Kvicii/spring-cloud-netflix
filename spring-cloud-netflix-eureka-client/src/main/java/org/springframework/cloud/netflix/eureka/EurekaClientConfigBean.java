@@ -37,6 +37,8 @@ import static org.springframework.cloud.netflix.eureka.EurekaConstants.DEFAULT_P
 /**
  * @author Dave Syer
  * @author Gregor Zurowski
+ * <p>
+ * 从spring-boot的application.yml中将配置加载出来 通过这个Bean对外提供所有eurek-client相关的配置的读取
  */
 @ConfigurationProperties(EurekaClientConfigBean.PREFIX)
 public class EurekaClientConfigBean implements EurekaClientConfig {

@@ -29,6 +29,9 @@ import java.lang.annotation.Target;
  * it is Eureka you want. All it does is turn on discovery and let the autoconfiguration
  * find the eureka classes if they are available (i.e. you need Eureka on the classpath as
  * well).
+ * <p>
+ * 触发了 {@link EurekaClientAutoConfiguration} 的执行 完成从application.yml中读取配置 完成DiscoveryClient的初始化和启动
+ * 通过额外的一些代码(非原生eureka) 启动时 直接完成向eureka进行注册 而不需要等待40s后再进行注册
  *
  * @author Dave Syer
  * @author Spencer Gibb

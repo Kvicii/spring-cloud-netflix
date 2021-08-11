@@ -61,24 +61,24 @@ public class EurekaServerInitializerConfiguration
 		this.servletContext = servletContext;
 	}
 
+	/**
+	 * 随着spring的生命周期启动 进行eureka-server环境的初始化
+	 */
 	@Override
 	public void start() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					//TODO: is this class even needed now?
-					eurekaServerBootstrap.contextInitialized(EurekaServerInitializerConfiguration.this.servletContext);
-					log.info("Started Eureka Server");
+		new Thread(() -> {
+			try {
+				//TODO: is this class even needed now?
+				eurekaServerBootstrap.contextInitialized(EurekaServerInitializerConfiguration.this.servletContext);
+				log.info("Started Eureka Server");
 
-					publish(new EurekaRegistryAvailableEvent(getEurekaServerConfig()));
-					EurekaServerInitializerConfiguration.this.running = true;
-					publish(new EurekaServerStartedEvent(getEurekaServerConfig()));
-				}
-				catch (Exception ex) {
-					// Help!
-					log.error("Could not initialize Eureka servlet context", ex);
-				}
+				publish(new EurekaRegistryAvailableEvent(getEurekaServerConfig()));
+				EurekaServerInitializerConfiguration.this.running = true;
+				publish(new EurekaServerStartedEvent(getEurekaServerConfig()));
+			}
+			catch (Exception ex) {
+				// Help!
+				log.error("Could not initialize Eureka servlet context", ex);
 			}
 		}).start();
 	}

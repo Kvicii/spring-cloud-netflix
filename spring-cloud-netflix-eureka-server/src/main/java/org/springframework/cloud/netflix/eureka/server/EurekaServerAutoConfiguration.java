@@ -67,6 +67,9 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 /**
  * @author Gunnar Hillert
  * @author Biju Kunjummen
+ * <p>
+ * 依托 spring boot的AutoConfiguration机制 使用一个@EnableEurekaServer注解 触发EurekaServerAutoConfiguration的执行
+ * 自动将eureka-server初始化和启动
  */
 @Configuration
 @Import(EurekaServerInitializerConfiguration.class)
@@ -155,6 +158,12 @@ public class EurekaServerAutoConfiguration extends WebMvcConfigurerAdapter {
 		}
 	}
 
+	/**
+	 * 完成eureka注册表的自动装配
+	 *
+	 * @param serverCodecs
+	 * @return
+	 */
 	@Bean
 	public PeerAwareInstanceRegistry peerAwareInstanceRegistry(
 			ServerCodecs serverCodecs) {
@@ -165,6 +174,13 @@ public class EurekaServerAutoConfiguration extends WebMvcConfigurerAdapter {
 				this.instanceRegistryProperties.getDefaultOpenForTrafficCount());
 	}
 
+	/**
+	 * 完成eureka-server集群对象的自动装配
+	 *
+	 * @param registry
+	 * @param serverCodecs
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public PeerEurekaNodes peerEurekaNodes(PeerAwareInstanceRegistry registry,
@@ -173,6 +189,14 @@ public class EurekaServerAutoConfiguration extends WebMvcConfigurerAdapter {
 				this.eurekaClientConfig, serverCodecs, this.applicationInfoManager);
 	}
 
+	/**
+	 * 完成eureka上下文的自动装配
+	 *
+	 * @param serverCodecs
+	 * @param registry
+	 * @param peerEurekaNodes
+	 * @return
+	 */
 	@Bean
 	public EurekaServerContext eurekaServerContext(ServerCodecs serverCodecs,
 			PeerAwareInstanceRegistry registry, PeerEurekaNodes peerEurekaNodes) {
@@ -180,6 +204,13 @@ public class EurekaServerAutoConfiguration extends WebMvcConfigurerAdapter {
 				registry, peerEurekaNodes, this.applicationInfoManager);
 	}
 
+	/**
+	 * 完成eureka-server的bootstrap的自动装配
+	 *
+	 * @param registry
+	 * @param serverContext
+	 * @return
+	 */
 	@Bean
 	public EurekaServerBootstrap eurekaServerBootstrap(PeerAwareInstanceRegistry registry,
 			EurekaServerContext serverContext) {

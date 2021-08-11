@@ -77,6 +77,7 @@ public class EurekaServerBootstrap {
 		this.serverContext = serverContext;
 	}
 
+	// eureka-server的初始化几乎是copy的eureka的代码 还原了eureka-server的初始化
 	public void contextInitialized(ServletContext context) {
 		try {
 			initEurekaEnvironment();
@@ -105,7 +106,7 @@ public class EurekaServerBootstrap {
 		log.info("Eureka Service is now shutdown...");
 	}
 
-	protected void initEurekaEnvironment() throws Exception {
+	protected void initEurekaEnvironment() {
 		log.info("Setting the eureka configuration..");
 
 		String dataCenter = ConfigurationManager.getConfigInstance()
@@ -115,8 +116,7 @@ public class EurekaServerBootstrap {
 					"Eureka data center value eureka.datacenter is not set, defaulting to default");
 			ConfigurationManager.getConfigInstance()
 					.setProperty(ARCHAIUS_DEPLOYMENT_DATACENTER, DEFAULT);
-		}
-		else {
+		} else {
 			ConfigurationManager.getConfigInstance()
 					.setProperty(ARCHAIUS_DEPLOYMENT_DATACENTER, dataCenter);
 		}
@@ -127,8 +127,7 @@ public class EurekaServerBootstrap {
 					.setProperty(ARCHAIUS_DEPLOYMENT_ENVIRONMENT, TEST);
 			log.info(
 					"Eureka environment value eureka.environment is not set, defaulting to test");
-		}
-		else {
+		} else {
 			ConfigurationManager.getConfigInstance()
 					.setProperty(ARCHAIUS_DEPLOYMENT_ENVIRONMENT, environment);
 		}
@@ -152,7 +151,9 @@ public class EurekaServerBootstrap {
 		log.info("Initialized server context");
 
 		// Copy registry from neighboring eureka node
+		// 从其他eureka-server节点拷贝注册表信息 返回注册表中服务实例个数
 		int registryCount = this.registry.syncUp();
+		// 实际调用eureka-server去做处理
 		this.registry.openForTraffic(this.applicationInfoManager, registryCount);
 
 		// Register all monitoring statistics.
