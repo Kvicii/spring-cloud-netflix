@@ -61,7 +61,11 @@ import com.netflix.ribbon.Ribbon;
 @Configuration
 @ConditionalOnClass({ IClient.class, RestTemplate.class, AsyncRestTemplate.class, Ribbon.class})
 @RibbonClients
+// 明确的说明了 RibbonAutoConfiguration必须要等到EurekaClientAutoConfiguration初始化完成`之后`再进行初始化
 @AutoConfigureAfter(name = "org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration")
+// 必须要在spring-cloud-commons工程下spring-cloud-commons包的LoadBalancerAutoConfiguration和AsyncLoadBalancerAutoConfiguration初始化`之前`
+// LoadBalancerAutoConfiguration和AsyncLoadBalancerAutoConfiguration中的一些代码 是依赖于LoadBalanceClient的 但是LoadBalanceClient的初始化是在RibbonAutoConfiguration中进行的
+// 所以初始化RibbonAutoConfiguration必须在LoadBalancerAutoConfiguration和AsyncLoadBalancerAutoConfiguration之前
 @AutoConfigureBefore({LoadBalancerAutoConfiguration.class, AsyncLoadBalancerAutoConfiguration.class})
 @EnableConfigurationProperties({RibbonEagerLoadProperties.class, ServerIntrospectorProperties.class})
 public class RibbonAutoConfiguration {
@@ -84,6 +88,11 @@ public class RibbonAutoConfiguration {
 		return factory;
 	}
 
+	/**
+	 * 创建了一个LoadBalancerClient 其实现类是RibbonLoadbalancerClient
+	 *
+	 * @return RibbonLoadBalancerClient
+	 */
 	@Bean
 	@ConditionalOnMissingBean(LoadBalancerClient.class)
 	public LoadBalancerClient loadBalancerClient() {

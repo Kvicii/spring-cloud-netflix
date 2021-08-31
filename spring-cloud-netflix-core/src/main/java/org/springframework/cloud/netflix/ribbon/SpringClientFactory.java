@@ -32,6 +32,10 @@ import com.netflix.loadbalancer.ILoadBalancer;
  * creates a Spring ApplicationContext per client name, and extracts the beans that it
  * needs from there.
  *
+ * 对Ribbon调用的每一个服务 对于每一个服务名称 都有一个独立的Spring的ApplicationContext上下文 例:
+ * 		获取ServiceA的LoadBalancer 那么就从ServiceA对应的ApplicationContext容器中去获取自己的LoadBalancer即可
+ * 		如果是另外一个ServiceC服务 那就是ServiceC对应的ApplicationContext容器
+ *
  * @author Spencer Gibb
  * @author Dave Syer
  */
@@ -56,6 +60,8 @@ public class SpringClientFactory extends NamedContextFactory<RibbonClientSpecifi
 	 * @throws RuntimeException if any error occurs
 	 */
 	public ILoadBalancer getLoadBalancer(String name) {
+		// 从Map<String, AnnotationConfigApplicationContext>缓存中获取一个类型为ILoadBalancer的LoadBalancer 如果没有就创建一个
+		// 这里的ILoadBalancer其实是RibbonClientConfiguration#ribbonLoadBalancer方法中创建的ZoneAwareLoadBalancer(默认LoadBalancer)
 		return getInstance(name, ILoadBalancer.class);
 	}
 

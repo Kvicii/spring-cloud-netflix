@@ -54,6 +54,8 @@ public class RibbonLoadBalancerClient implements LoadBalancerClient {
 		ServerIntrospector serverIntrospector = serverIntrospector(serviceId);
 		URI uri = RibbonUtils.updateToHttpsIfNeeded(original, clientConfig,
 				serverIntrospector, server);
+		// 拼接URL 将 http://ServiceA/sayHello/leo 进行重构替换 http://localhost:9090/sayHello/leo
+		// 将ServiceA替换成实际选择出来的Server对应的hostname:port
 		return context.reconstructURIWithServer(server, uri);
 	}
 
@@ -67,9 +69,22 @@ public class RibbonLoadBalancerClient implements LoadBalancerClient {
 				serverIntrospector(serviceId).getMetadata(server));
 	}
 
+	/**
+	 * spring-cloud-commons包下的LoadBalancerInterceptor拦截器(Ribbon拦截器)最终会执行到该方法
+	 *
+	 * @param serviceId
+	 * @param request
+	 * @param <T>
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public <T> T execute(String serviceId, LoadBalancerRequest<T> request) throws IOException {
+		// 每个Service对应着一个Spring的ApplicationContext上下文容器(Map缓存) 获取的时候直接从相应Service的容器中获取对应的LoadBalancer
+		// 如果没有获取到 就创建一个放入 获取到就直接返回
 		ILoadBalancer loadBalancer = getLoadBalancer(serviceId);
+		// 通过LoadBalancer从一个服务对应的ServerList中选择一个Server出来
+		// 保持负载均衡 将请求均匀的达到各个服务实例
 		Server server = getServer(loadBalancer);
 		if (server == null) {
 			throw new IllegalStateException("No instances available for " + serviceId);
@@ -90,11 +105,15 @@ public class RibbonLoadBalancerClient implements LoadBalancerClient {
 			throw new IllegalStateException("No instances available for " + serviceId);
 		}
 
-		RibbonLoadBalancerContext context = this.clientFactory
-				.getLoadBalancerContext(serviceId);
+		// 从SpringClientFactory中获取ServiceA对应的ApplicationContext容器 然后再从这个容器中获取对应的RibbonLoadBalancerContext的Bean
+		RibbonLoadBalancerContext context = this.clientFactory.getLoadBalancerContext(serviceId);
 		RibbonStatsRecorder statsRecorder = new RibbonStatsRecorder(context, server);
 
 		try {
+			/**
+			 * 调用到一个匿名内部类的apply方法
+			 * {@link org.springframework.cloud.client.loadbalancer.LoadBalancerRequest#apply(ServiceInstance)}}
+			 */
 			T returnVal = request.apply(serviceInstance);
 			statsRecorder.recordStats(returnVal);
 			return returnVal;
@@ -103,8 +122,7 @@ public class RibbonLoadBalancerClient implements LoadBalancerClient {
 		catch (IOException ex) {
 			statsRecorder.recordStats(ex);
 			throw ex;
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			statsRecorder.recordStats(ex);
 			ReflectionUtils.rethrowRuntimeException(ex);
 		}
@@ -138,6 +156,7 @@ public class RibbonLoadBalancerClient implements LoadBalancerClient {
 	}
 
 	protected ILoadBalancer getLoadBalancer(String serviceId) {
+		// 通过SpringClientFactory获取对应的LoadBalancer
 		return this.clientFactory.getLoadBalancer(serviceId);
 	}
 
@@ -148,7 +167,7 @@ public class RibbonLoadBalancerClient implements LoadBalancerClient {
 		private Map<String, String> metadata;
 
 		public RibbonServer(String serviceId, Server server) {
-			this(serviceId, server, false, Collections.<String, String> emptyMap());
+			this(serviceId, server, false, Collections.emptyMap());
 		}
 
 		public RibbonServer(String serviceId, Server server, boolean secure,

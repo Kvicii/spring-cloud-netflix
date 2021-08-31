@@ -19,6 +19,7 @@ package org.springframework.cloud.netflix.ribbon;
 import java.net.URI;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Provider;
 
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
@@ -91,6 +92,12 @@ public class RibbonClientConfiguration {
 		return config;
 	}
 
+	/**
+	 * 构造了一个ZoneAvoidanceRule
+	 *
+	 * @param config
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public IRule ribbonRule(IClientConfig config) {
@@ -102,15 +109,30 @@ public class RibbonClientConfiguration {
 		return rule;
 	}
 
+	/**
+	 * 构造一个用于检测服务存活的IPing组件 但LoadBalancer使用的不是这个实现
+	 * 而是{@link org.springframework.cloud.netflix.ribbon.eureka.EurekaRibbonClientConfiguration#ribbonPing(IClientConfig }
+	 *
+	 * @param config
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public IPing ribbonPing(IClientConfig config) {
 		if (this.propertiesFactory.isSet(IPing.class, name)) {
 			return this.propertiesFactory.get(IPing.class, config, name);
 		}
+		// 默认的IPing组件是不生效的 DummyPing中什么都没有
 		return new DummyPing();
 	}
 
+	/**
+	 * 实例化了一个ServerList的Bean Ribbon和Eureka整合并不是使用这个ServerList
+	 * 而是 {@link org.springframework.cloud.netflix.ribbon.eureka.EurekaRibbonClientConfiguration#ribbonServerList(IClientConfig, Provider)}
+	 *
+	 * @param config
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	@SuppressWarnings("unchecked")
@@ -123,12 +145,29 @@ public class RibbonClientConfiguration {
 		return serverList;
 	}
 
+	/**
+	 * 构造一个ServerListUpdater
+	 *
+	 * @param config
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public ServerListUpdater ribbonServerListUpdater(IClientConfig config) {
 		return new PollingServerListUpdater(config);
 	}
 
+	/**
+	 * 返回一个ILoadBalancer
+	 *
+	 * @param config
+	 * @param serverList        传入实例化的ServerList 默认实现是ConfigurationBasedServerList
+	 * @param serverListFilter
+	 * @param rule              实际是ZoneAvoidanceRule的父类PredicateBasedRule
+	 * @param ping              默认实现是NIWSDiscoveryPing
+	 * @param serverListUpdater PollingServerListUpdater
+	 * @return 默认的ZoneAwareLoadBalancer
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public ILoadBalancer ribbonLoadBalancer(IClientConfig config,

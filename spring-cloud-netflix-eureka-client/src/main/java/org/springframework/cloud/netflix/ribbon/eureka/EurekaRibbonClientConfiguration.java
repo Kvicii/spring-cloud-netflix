@@ -86,6 +86,14 @@ public class EurekaRibbonClientConfiguration {
 		this.approximateZoneFromHostname = approximateZoneFromHostname;
 	}
 
+	/**
+	 * Ribbon和Eureka整合时真正的IPing组件
+	 * 并不是 {@link org.springframework.cloud.netflix.ribbon.RibbonClientConfiguration#ribbonPing(IClientConfig)} 够早的ServerList
+	 * 检测服务实例InstanceInfo的状态 判断状态是否是UP的
+	 *
+	 * @param config
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public IPing ribbonPing(IClientConfig config) {
@@ -97,6 +105,14 @@ public class EurekaRibbonClientConfiguration {
 		return ping;
 	}
 
+	/**
+	 * Ribbon和Eureka整合时真正的ServerList组件
+	 * 并不是 {@link org.springframework.cloud.netflix.ribbon.RibbonClientConfiguration#ribbonServerList(IClientConfig)} 够早的ServerList
+	 *
+	 * @param config
+	 * @param eurekaClientProvider
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public ServerList<?> ribbonServerList(IClientConfig config, Provider<EurekaClient> eurekaClientProvider) {
