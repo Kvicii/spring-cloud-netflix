@@ -92,13 +92,16 @@ public class FeignClientsConfiguration {
 		return conversionService;
 	}
 
+	/**
+	 * 构造一个Builder对象 Hystrix相关的
+	 */
 	@Configuration
 	@ConditionalOnClass({ HystrixCommand.class, HystrixFeign.class })
 	protected static class HystrixFeignConfiguration {
 		@Bean
 		@Scope("prototype")
 		@ConditionalOnMissingBean
-		@ConditionalOnProperty(name = "feign.hystrix.enabled", matchIfMissing = false)
+		@ConditionalOnProperty(name = "feign.hystrix.enabled")
 		public Feign.Builder feignHystrixBuilder() {
 			return HystrixFeign.builder();
 		}
@@ -110,6 +113,12 @@ public class FeignClientsConfiguration {
 		return Retryer.NEVER_RETRY;
 	}
 
+	/**
+	 * 构造一个Builder对象 Retry相关的
+	 *
+	 * @param retryer
+	 * @return
+	 */
 	@Bean
 	@Scope("prototype")
 	@ConditionalOnMissingBean

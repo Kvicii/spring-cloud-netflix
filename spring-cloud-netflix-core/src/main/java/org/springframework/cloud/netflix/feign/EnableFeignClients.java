@@ -29,6 +29,8 @@ import org.springframework.context.annotation.Import;
  * <code>@FeignClient</code>}). Configures component scanning directives for use with
  * {@link org.springframework.context.annotation.Configuration
  * <code>@Configuration</code>} classes.
+ * <p>
+ * 扫描那些标注了@FeignClient注解的接口 这里有一些参数 就是指定你要扫描哪些包下面的@FeignClient注解的接口
  *
  * @author Spencer Gibb
  * @author Dave Syer
@@ -37,6 +39,7 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
+// 负责扫描@FeignClient注解的极为关键的一个入口
 @Import(FeignClientsRegistrar.class)
 public @interface EnableFeignClients {
 

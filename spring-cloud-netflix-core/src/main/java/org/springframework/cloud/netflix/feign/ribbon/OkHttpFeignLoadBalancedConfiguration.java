@@ -23,7 +23,6 @@ import okhttp3.ConnectionPool;
 
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PreDestroy;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,6 +35,8 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Spencer Gibb
+ * <p>
+ * 要求的是feign.okhttp.enabled属性设置为true 才会启用该类定义的 Client
  */
 @Configuration
 @ConditionalOnClass(OkHttpClient.class)

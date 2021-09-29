@@ -31,8 +31,10 @@ import feign.Request;
 import feign.Response;
 
 /**
- * @author Dave Syer
+ * Feign最核心的入口 构造一个FeignClient 里面包含了Encoder Decoder Logger Contract等其他重要组件
+ * 负载均衡 底层和Ribbon结合使用
  *
+ * @author Dave Syer
  */
 public class LoadBalancerFeignClient implements Client {
 
@@ -53,17 +55,25 @@ public class LoadBalancerFeignClient implements Client {
 	@Override
 	public Response execute(Request request, Request.Options options) throws IOException {
 		try {
+			// 请求URL
 			URI asUri = URI.create(request.url());
+			// 从请求URL取出要访问的服务名称ServiceA
 			String clientName = asUri.getHost();
+			// 从请求URL剔除的服务名称ServiceA
 			URI uriWithoutHost = cleanUrl(request.url(), clientName);
+			// 适合Ribbon的请求对象
 			FeignLoadBalancer.RibbonRequest ribbonRequest = new FeignLoadBalancer.RibbonRequest(
 					this.delegate, request, uriWithoutHost);
 
+			// Ribbon相关的一些配置 调用到Ribbon中
+			// com.netflix.client.AbstractLoadBalancerAwareClient.executeWithLoadBalancer(S, com.netflix.client.config.IClientConfig)
 			IClientConfig requestConfig = getClientConfig(options, clientName);
+			// 调用Ribbon 默认使用的是ZoneAwareLoadBalancer 在 org.springframework.cloud.netflix.ribbon.RibbonClientConfiguration.ribbonLoadBalancer 注入spring容器
+			// ServerList默认使用的是DomainExtractingServerList DomainExtractingServerList这个东西自己会去eureka的注册表里去抓取服务对应的注册表 server list 在 org.springframework.cloud.netflix.ribbon.eureka.EurekaRibbonClientConfiguration.ribbonServerList 注入spring容器
+			// spring boot启动时 要去获取一个ribbon的ILoadBalancer的时候 会去获取到那个服务对应的一个独立的spring容器 再从这个容器里面去获取对应的独立的ZoneAwareLoadBalancer，ZoneAwareLoadBalancer内部就有DomainExtractingServerList
 			return lbClient(clientName).executeWithLoadBalancer(ribbonRequest,
 					requestConfig).toResponse();
-		}
-		catch (ClientException e) {
+		} catch (ClientException e) {
 			IOException io = findIOException(e);
 			if (io != null) {
 				throw io;

@@ -30,6 +30,12 @@ public class DefaultFeignLoggerFactory implements FeignLoggerFactory {
 		this.logger = logger;
 	}
 
+	/**
+	 * 默认创建的是Slf4j的Logger
+	 *
+	 * @param type the {@link Class} for which a {@link Logger} instance is to be created
+	 * @return
+	 */
 	@Override
 	public Logger create(Class<?> type) {
 		return this.logger != null ? this.logger : new Slf4jLogger(type);

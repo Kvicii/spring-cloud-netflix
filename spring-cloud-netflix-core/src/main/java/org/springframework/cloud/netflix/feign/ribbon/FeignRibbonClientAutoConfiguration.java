@@ -40,6 +40,8 @@ import feign.Request;
 /**
  * Autoconfiguration to be activated if Feign is in use and needs to be use Ribbon as a
  * load balancer.
+ * <p>
+ * feign和ribbon整合起来的东西
  *
  * @author Dave Syer
  */

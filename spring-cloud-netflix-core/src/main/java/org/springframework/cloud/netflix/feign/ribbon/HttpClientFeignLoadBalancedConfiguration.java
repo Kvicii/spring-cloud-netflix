@@ -42,6 +42,8 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Spencer Gibb
+ * <p>
+ * 要求的是feign.httpclient.enabled属性设置为true 才会启用该类定义的 Client
  */
 @Configuration
 @ConditionalOnClass(ApacheHttpClient.class)

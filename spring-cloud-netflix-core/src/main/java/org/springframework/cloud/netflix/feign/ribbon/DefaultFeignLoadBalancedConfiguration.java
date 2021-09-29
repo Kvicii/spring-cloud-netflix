@@ -25,6 +25,8 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Spencer Gibb
+ * <p>
+ * 默认使用的Client
  */
 @Configuration
 class DefaultFeignLoadBalancedConfiguration {

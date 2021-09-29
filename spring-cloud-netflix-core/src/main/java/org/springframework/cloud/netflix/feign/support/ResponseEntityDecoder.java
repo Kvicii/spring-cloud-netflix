@@ -18,6 +18,10 @@ import feign.codec.Decoder;
 /**
  * Decoder adds compatibility for Spring MVC's ResponseEntity to any other decoder via
  * composition.
+ * <p>
+ * Feign中的解码器组件
+ * 收到一个请求的Json对象参数后 将这个Json对象反序列化为本地的对象
+ *
  * @author chadjaros
  */
 public class ResponseEntityDecoder implements Decoder {

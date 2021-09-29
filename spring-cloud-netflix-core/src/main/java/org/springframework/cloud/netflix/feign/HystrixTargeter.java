@@ -35,6 +35,7 @@ class HystrixTargeter implements Targeter {
 	@Override
 	public <T> T target(FeignClientFactoryBean factory, Feign.Builder feign, FeignContext context,
 						Target.HardCodedTarget<T> target) {
+		// 由于参数 feign.hystrix.enabled 默认没有和Hystrix整合时 Builder使用的是Feign.Builder 所以会直接执行该分支
 		if (!(feign instanceof feign.hystrix.HystrixFeign.Builder)) {
 			return feign.target(target);
 		}

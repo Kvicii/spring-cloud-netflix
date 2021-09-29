@@ -29,6 +29,12 @@ import org.springframework.core.annotation.AliasFor;
  * created (e.g. for autowiring into another component). If ribbon is available it will be
  * used to load balance the backend requests, and the load balancer can be configured
  * using a <code>@RibbonClient</code> with the same name (i.e. value) as the feign client.
+ * <p>
+ * 使用@FeignClient标注了一个接口 这个接口会被创建为一个REST Client(即发送RESTful请求的客户端)
+ * 可以将这个REST Client注入其他组件
+ * 如果启用了Ribbon 就会采用负载均衡的方式 进行HTTP请求的发送 可以用@RibbonClient标注一个配置类 在配置类中可以定义Ribbon的ILoadBalancer
+ * <p>
+ * 用@FeignClient标注一个接口 就是让Feign对这个接口创建一个对应的动态代理 这个动态代理就是REST Client(发送REST请求的客户端)
  *
  * @author Spencer Gibb
  * @author Venil Noronha
@@ -56,6 +62,8 @@ public @interface FeignClient {
 
 	/**
 	 * The service id with optional protocol prefix. Synonym for {@link #value() value}.
+	 * <p>
+	 * 和value指定的意义一致 都是服务名称
 	 */
 	@AliasFor("value")
 	String name() default "";
@@ -67,11 +75,15 @@ public @interface FeignClient {
 
 	/**
 	 * An absolute URL or resolvable hostname (the protocol is optional).
+	 * <p>
+	 * 如果不用ribbon的话 那么就没法做负载均衡了 可以就用url地址指定要请求的地址
 	 */
 	String url() default "";
 
 	/**
 	 * Whether 404s should be decoded instead of throwing FeignExceptions
+	 * <p>
+	 * 就是说用404替代抛出FeignException异常
 	 */
 	boolean decode404() default false;
 
@@ -81,6 +93,8 @@ public @interface FeignClient {
 	 * {@link feign.codec.Decoder}, {@link feign.codec.Encoder}, {@link feign.Contract}.
 	 *
 	 * @see FeignClientsConfiguration for the defaults
+	 *
+	 * 指定一个配置类 可以自定义Encoder | Decoder | Contract
 	 */
 	Class<?>[] configuration() default {};
 

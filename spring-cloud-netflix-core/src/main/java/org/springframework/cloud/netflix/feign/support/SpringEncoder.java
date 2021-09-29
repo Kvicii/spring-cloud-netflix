@@ -43,6 +43,9 @@ import static org.springframework.cloud.netflix.feign.support.FeignUtils.getHead
 import static org.springframework.cloud.netflix.feign.support.FeignUtils.getHttpHeaders;
 
 /**
+ * Feign中的编码器组件
+ * 调用接口时 传递的参数是对象 Feign需要将这个对象进行Encode进行Json序列化
+ *
  * @author Spencer Gibb
  * @author ScienJus
  */

@@ -67,14 +67,15 @@ public class FeignLoadBalancer extends
 	public RibbonResponse execute(RibbonRequest request, IClientConfig configOverride)
 			throws IOException {
 		Request.Options options;
+		// 发送请求的超时时间 默认都是1000ms
+		// 做微服务系统的时候 即使不配置重试 | 降级 但是至少得配置超时
+		// 请求一个接口多久必须得超时 要求任何一个接口 请求时间最好不要超过200ms 一般接口最好是在10ms左右
+		// 经历了很多层服务的转发之后 用户在浏览器上发起的一个操作 一般在几百毫秒一定返回了
 		if (configOverride != null) {
 			options = new Request.Options(
-					configOverride.get(CommonClientConfigKey.ConnectTimeout,
-							this.connectTimeout),
-					(configOverride.get(CommonClientConfigKey.ReadTimeout,
-							this.readTimeout)));
-		}
-		else {
+					configOverride.get(CommonClientConfigKey.ConnectTimeout, this.connectTimeout),
+					(configOverride.get(CommonClientConfigKey.ReadTimeout, this.readTimeout)));
+		} else {
 			options = new Request.Options(this.connectTimeout, this.readTimeout);
 		}
 		Response response = request.client().execute(request.toRequest(), options);
@@ -144,10 +145,10 @@ public class FeignLoadBalancer extends
 
 				@Override
 				public HttpHeaders getHeaders() {
-					Map<String, List<String>> headers = new HashMap<String, List<String>>();
+					Map<String, List<String>> headers = new HashMap<>();
 					Map<String, Collection<String>> feignHeaders = RibbonRequest.this.toRequest().headers();
 					for(String key : feignHeaders.keySet()) {
-						headers.put(key, new ArrayList<String>(feignHeaders.get(key)));
+						headers.put(key, new ArrayList<>(feignHeaders.get(key)));
 					}
 					HttpHeaders httpHeaders = new HttpHeaders();
 					httpHeaders.putAll(headers);

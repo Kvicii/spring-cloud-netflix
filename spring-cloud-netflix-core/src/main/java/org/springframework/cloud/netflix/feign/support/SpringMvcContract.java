@@ -56,6 +56,9 @@ import feign.MethodMetadata;
 import feign.Param;
 
 /**
+ * Feign的Contract组件
+ * SpringMVC的@PathVariable、@RequestMapping、@RequestParam等注解 Feign是不支持的 这个组件就相当于是契约组件 负责解释SpringMVC的注解
+ *
  * @author Spencer Gibb
  * @author Abhijit Sarkar
  */
@@ -76,7 +79,7 @@ public class SpringMvcContract extends Contract.BaseContract
 	private ResourceLoader resourceLoader = new DefaultResourceLoader();
 
 	public SpringMvcContract() {
-		this(Collections.<AnnotatedParameterProcessor> emptyList());
+		this(Collections.emptyList());
 	}
 
 	public SpringMvcContract(
@@ -193,7 +196,7 @@ public class SpringMvcContract extends Contract.BaseContract
 		// headers
 		parseHeaders(data, method, methodMapping);
 
-		data.indexToExpander(new LinkedHashMap<Integer, Param.Expander>());
+		data.indexToExpander(new LinkedHashMap<>());
 	}
 
 	private String resolve(String value) {

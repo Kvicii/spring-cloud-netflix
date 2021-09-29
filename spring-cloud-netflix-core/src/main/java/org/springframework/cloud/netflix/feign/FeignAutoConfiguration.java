@@ -67,6 +67,10 @@ public class FeignAutoConfiguration {
 		return HasFeatures.namedFeature("Feign", Feign.class);
 	}
 
+	/**
+	 * 构造一个FeignContext 在 {@link FeignClientFactoryBean#getObject()} 中使用context容器获取
+	 * @return
+	 */
 	@Bean
 	public FeignContext feignContext() {
 		FeignContext context = new FeignContext();
